@@ -36,7 +36,7 @@ def acessar_bronze(usuario):
 
 @require_role("scientist")
 def acessar_silver(usuario):
-    print("📁 Lendo camada Silver...")
+    print(" lendo camada Silver...")
     return con.execute("SELECT * FROM read_parquet('/mnt/data/silver_pacientes.parquet') LIMIT 5").df()
 
 

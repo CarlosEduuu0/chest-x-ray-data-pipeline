@@ -112,7 +112,7 @@ class DataLake:
             con.execute(f"""ALTER TABLE gold_pacientes RENAME COLUMN "OriginalImagePixelSpacing[x" TO espacamento_vertical;""")
             con.execute(f"""ALTER TABLE gold_pacientes RENAME COLUMN "y]" TO espacamento_horizontal;""")
             con.execute(f"""ALTER TABLE gold_pacientes RENAME COLUMN "View Position" TO angulo_de_vista;""")
-            con.execute(f"""ALTER TABLE gold_pacientes RENAME COLUMN "Finding Labels" TO doencas;""")
+            con.execute(f"""ALTER TABLE gold_pacientes RENAME COLUMN "Finding Labels" TO patologia;""")
             con.execute(f"""ALTER TABLE gold_pacientes RENAME COLUMN "Patient Age" TO idades;""")
             con.execute(f"""ALTER TABLE gold_pacientes RENAME COLUMN "Image Index" TO index_da_imagem;""")
         except duckdb.CatalogException:
@@ -132,11 +132,14 @@ class DataLake:
 
 
         try:
-            con.execute('ALTER TABLE diamond_pacientes DROP COLUMN largura_original;')
-            con.execute('ALTER TABLE diamond_pacientes DROP COLUMN altura_original;')
-            con.execute('ALTER TABLE diamond_pacientes DROP COLUMN espacamento_vertical;')
-            con.execute('ALTER TABLE diamond_pacientes DROP COLUMN espacamento_horizontal;')
-            con.execute('ALTER TABLE diamond_pacientes DROP COLUMN  angulo_de_vista;')
+            con.execute(f"""ALTER TABLE diamond_pacientes DROP COLUMN "OriginalImage[Width";""")
+            con.execute(f"""ALTER TABLE diamond_pacientes DROP COLUMN "Height]";""")
+            con.execute(f"""ALTER TABLE diamond_pacientes DROP COLUMN "OriginalImagePixelSpacing[x";""")
+            con.execute(f"""ALTER TABLE diamond_pacientes DROP COLUMN "y]";""")
+            con.execute(f"""ALTER TABLE diamond_pacientes RENAME COLUMN "View Position" TO angulo_de_vista;""")
+            con.execute(f"""ALTER TABLE diamond_pacientes RENAME COLUMN "Finding Labels" TO patologia;""")
+            con.execute(f"""ALTER TABLE diamond_pacientes RENAME COLUMN "Patient Age" TO idades;""")
+            con.execute(f"""ALTER TABLE diamond_pacientes RENAME COLUMN "Image Index" TO index_da_imagem;""")
         except duckdb.CatalogException as e:
             print(f" algumas colunas nao foram encontradas: {e}")
 
@@ -157,7 +160,7 @@ def main():
     dl.register_parquet_file(file_path, 'pacientes')
     dl.gerar_silver('D:/projeto_lapes/datalake/bronze/pacientes/pacientes.parquet','D:/projeto_lapes/datalake/silver/silver_pacientes.parquet')
     dl.gerar_gold('D:/projeto_lapes/datalake/silver/silver_pacientes.parquet', 'D:/projeto_lapes/datalake/gold/paciente_gold.parquet')
-    dl.gerar_dimond('D:/projeto_lapes/datalake/gold/paciente_gold.parquet','D:/projeto_lapes/datalake/diamond/pacientes_dimond.parquet')
+    dl.gerar_dimond('D:/projeto_lapes/datalake/silver/silver_pacientes.parquet','D:/projeto_lapes/datalake/diamond/pacientes_dimond.parquet')
 
 if __name__ == "__main__":
     main()
